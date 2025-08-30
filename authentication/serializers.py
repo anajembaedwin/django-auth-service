@@ -16,15 +16,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         write_only=True,
         min_length=8,
         style={'input_type': 'password'},
-        help_text='Enter a secure password (minimum 8 characters)',
-        example='SecurePassword123'
+        help_text='Enter a secure password (minimum 8 characters)'
     )
     
     password_confirm = serializers.CharField(
         write_only=True,
         style={'input_type': 'password'},
-        help_text='Confirm your password',
-        example='SecurePassword123'
+        help_text='Confirm your password'
     )
     
     class Meta:
@@ -96,14 +94,12 @@ class UserLoginSerializer(serializers.Serializer):
     """
     
     email = serializers.EmailField(
-        help_text='Your registered email address',
-        example='john.doe@example.com'
+        help_text='Your registered email address'
     )
     password = serializers.CharField(
         write_only=True,
         style={'input_type': 'password'},
-        help_text='Your account password',
-        example='SecurePassword123'
+        help_text='Your account password'
     )
     
     def validate(self, attrs):
@@ -146,8 +142,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     """
     
     email = serializers.EmailField(
-        help_text='Email address of the account to reset',
-        example='john.doe@example.com'
+        help_text='Email address of the account to reset'
     )
     
     def validate_email(self, value):
@@ -167,21 +162,18 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     """
     
     token = serializers.CharField(
-        help_text='Reset token received via email',
-        example='AbCd1234EfGh5678IjKl9012MnOp3456'
+        help_text='Reset token received via email'
     )
     new_password = serializers.CharField(
         write_only=True,
         min_length=8,
         style={'input_type': 'password'},
-        help_text='New secure password (minimum 8 characters)',
-        example='NewSecurePassword456'
+        help_text='New secure password (minimum 8 characters)'
     )
     new_password_confirm = serializers.CharField(
         write_only=True,
         style={'input_type': 'password'},
-        help_text='Confirm your new password',
-        example='NewSecurePassword456'
+        help_text='Confirm your new password'
     )
     
     def validate(self, attrs):
