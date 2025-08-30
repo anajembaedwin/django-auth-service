@@ -30,12 +30,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ['email', 'full_name', 'password', 'password_confirm']
         extra_kwargs = {
             'email': {
-                'help_text': 'Valid email address that will be used for login',
-                'example': 'john.doe@example.com'
+                'help_text': 'Valid email address that will be used for login'
             },
             'full_name': {
-                'help_text': 'Your full name (minimum 2 characters)',
-                'example': 'John Doe'
+                'help_text': 'Your full name (minimum 2 characters)'
             }
         }
     

@@ -393,16 +393,7 @@ def reset_password(request):
     - User ID, email, full name
     - Account creation and last update timestamps
     """,
-    manual_parameters=[
-        openapi.Parameter(
-            'Authorization',
-            openapi.IN_HEADER,
-            description="JWT access token",
-            type=openapi.TYPE_STRING,
-            required=True,
-            format="Bearer <token>"
-        )
-    ],
+    security=[{'Bearer': []}],
     responses={
         200: openapi.Response(
             description="Profile retrieved successfully",
@@ -479,16 +470,7 @@ def get_user_profile(request):
             )
         }
     ),
-    manual_parameters=[
-        openapi.Parameter(
-            'Authorization',
-            openapi.IN_HEADER,
-            description="JWT access token",
-            type=openapi.TYPE_STRING,
-            required=True,
-            format="Bearer <token>"
-        )
-    ],
+    security=[{'Bearer': []}],
     responses={
         200: openapi.Response(
             description="Logout successful",

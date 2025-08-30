@@ -26,6 +26,13 @@ COPY . /app/
 # Create static files directory
 RUN mkdir -p /app/staticfiles
 
+# Set build-time environment variables for collectstatic
+ENV SECRET_KEY=build-time-secret-key-for-collectstatic-only
+ENV DATABASE_URL=sqlite:///tmp/build.db
+ENV REDIS_URL=redis://localhost:6379/0
+ENV DEBUG=False
+ENV ALLOWED_HOSTS=localhost
+
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
