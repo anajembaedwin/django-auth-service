@@ -22,11 +22,12 @@ services:
           name: django-auth-redis
           property: connectionString
 
+  - type: redis
+    name: django-auth-redis
+    plan: free
+
 databases:
   - name: django-auth-db
     databaseName: auth_service_db
     user: auth_user
-    plan: free
-
-  - name: django-auth-redis
     plan: free
