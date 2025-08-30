@@ -7,3 +7,4 @@ redis==5.0.1
 django-redis==5.4.0
 django-cors-headers==4.3.1
 drf-yasg==1.21.7
+django-ratelimit==4.1.0
