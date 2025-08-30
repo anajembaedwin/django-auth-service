@@ -19,6 +19,7 @@ from .serializers import (
     UserProfileSerializer
 )
 from .services import PasswordResetService, TokenService
+from .decorators import rate_limit
 
 # Swagger response examples
 user_response_example = {
@@ -84,6 +85,7 @@ error_response_example = {
 )
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@rate_limit(max_requests=3, time_window=600)  # 3 attempts per 10 minutes
 def register_user(request):
     """
     User Registration Endpoint
@@ -164,6 +166,7 @@ def register_user(request):
 )
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@rate_limit(max_requests=5, time_window=300)  # 5 attempts per 5 minutes
 def login_user(request):
     """
     User Login Endpoint
@@ -254,6 +257,7 @@ def login_user(request):
 )
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@rate_limit(max_requests=3, time_window=600)  # 3 attempts per 10 minutes
 def request_password_reset(request):
     """
     Password Reset Request Endpoint
