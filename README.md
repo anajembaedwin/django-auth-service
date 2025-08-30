@@ -1,2 +1,348 @@
-# django-auth-service
-Django Auth Service
+# Django Authentication Service
+
+A robust authentication system built with Django, PostgreSQL, Redis, and JWT tokens. This service provides user registration, login, password reset functionality with Redis caching, and is ready for deployment.
+
+## Features
+
+- **User Management**: Registration, login, logout, and profile management
+- **JWT Authentication**: Secure token-based authentication
+- **Password Reset**: Email-based password reset with Redis token storage
+- **Rate Limiting**: Protection against brute force attacks
+- **PostgreSQL Integration**: Reliable database storage
+- **Redis Caching**: Fast token storage and caching
+- **Docker Support**: Easy containerized development
+- **Production Ready**: Configured for deployment on Render/Heroku
+- **Comprehensive Testing**: Unit tests for all major functionality
+- **Interactive API Documentation**: Swagger/OpenAPI documentation
+
+## Tech Stack
+
+- **Backend**: Django 4.2.7, Django REST Framework
+- **Database**: PostgreSQL
+- **Caching**: Redis
+- **Authentication**: JWT (Simple JWT)
+- **Documentation**: Swagger/OpenAPI (drf-yasg)
+- **Deployment**: Render, Docker
+- **Testing**: Django Test Framework
+
+## Prerequisites
+
+- Python 3.8+
+- PostgreSQL 12+
+- Redis 6+
+- Git
+
+## Quick Start
+
+### Local Development Setup
+
+1. **Clone the repository**:
+```bash
+git clone https://github.com/yourusername/django-auth-service.git
+cd django-auth-service
+```
+
+2. **Run the setup script**:
+```bash
+chmod +x scripts/setup_local.sh
+./scripts/setup_local.sh
+```
+
+3. **Configure environment variables**:
+```bash
+cp .env.example .env
+# Edit .env with your database and Redis credentials
+```
+
+4. **Start the development server**:
+```bash
+source auth_env/bin/activate
+python manage.py runserver
+```
+
+### Using Docker
+
+1. **Start all services**:
+```bash
+docker-compose up -d
+```
+
+2. **Run migrations**:
+```bash
+docker-compose exec web python manage.py migrate
+```
+
+3. **Create test data**:
+```bash
+docker-compose exec web python manage.py create_test_data
+```
+
+## Environment Variables
+
+Create a `.env` file with the following variables:
+
+```env
+# Django Settings
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+# Database Configuration
+DATABASE_URL=postgresql://username:password@localhost:5432/auth_service_db
+
+# Redis Configuration
+REDIS_URL=redis://localhost:6379/0
+
+# JWT Settings
+JWT_ACCESS_TOKEN_LIFETIME_MINUTES=60
+JWT_REFRESH_TOKEN_LIFETIME_DAYS=7
+```
+
+## API Documentation
+
+### Interactive Documentation (Swagger UI)
+- **Local**: `http://localhost:8000/swagger/` 
+- **Production**: `https://your-app.render.com/swagger/`
+
+### Alternative Documentation (ReDoc)  
+- **Local**: `http://localhost:8000/redoc/`
+- **Production**: `https://your-app.render.com/redoc/`
+
+### Raw OpenAPI Specification
+- **JSON**: `http://localhost:8000/swagger.json`
+- **YAML**: `http://localhost:8000/swagger.yaml`
+
+The interactive Swagger UI allows you to:
+- ✅ View all available endpoints
+- ✅ Test API calls directly in the browser  
+- ✅ See request/response examples
+- ✅ Understand authentication requirements
+- ✅ Copy cURL commands for testing
+
+For detailed examples and integration guides, see [docs/api_documentation.md](docs/api_documentation.md)
+
+### Endpoints
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/register/` | User registration | No |
+| POST | `/login/` | User login | No |
+| POST | `/logout/` | User logout | Yes |
+| GET | `/profile/` | Get user profile | Yes |
+| POST | `/forgot-password/` | Request password reset | No |
+| POST | `/reset-password/` | Reset password with token | No |
+| GET | `/health/` | API health check | No |
+
+### Example Usage
+
+#### Register a new user:
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/register/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.doe@example.com",
+    "full_name": "John Doe",
+    "password": "securepassword123",
+    "password_confirm": "securepassword123"
+  }'
+```
+
+#### Login:
+```bash
+curl -X POST http://localhost:8000/api/v1/auth/login/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.doe@example.com",
+    "password": "securepassword123"
+  }'
+```
+
+#### Get user profile:
+```bash
+curl -X GET http://localhost:8000/api/v1/auth/profile/ \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+## Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+python manage.py test
+
+# Run tests with coverage
+python manage.py test --keepdb --verbosity=2
+
+# Run specific test class
+python manage.py test authentication.tests.UserModelTest
+```
+
+## Deployment
+
+### Deploy to Render
+
+1. **Create a Render account** and connect your GitHub repository
+
+2. **Configure environment variables** in Render dashboard:
+   - `SECRET_KEY`: Django secret key
+   - `DEBUG`: False
+   - `DATABASE_URL`: (Auto-generated by Render PostgreSQL)
+   - `REDIS_URL`: (Auto-generated by Render Redis)
+
+3. **Deploy**: Render will automatically deploy your app using `render.yaml`
+
+4. **Run migrations**:
+```bash
+# In Render shell
+python manage.py migrate
+python manage.py createsuperuser
+```
+
+### Manual Deployment
+
+Use the deployment script:
+
+```bash
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+```
+
+## Security Features
+
+- **JWT Authentication**: Secure token-based auth with refresh tokens
+- **Rate Limiting**: Protection against brute force attacks
+- **Password Validation**: Strong password requirements
+- **HTTPS Enforcement**: SSL redirect in production
+- **Security Headers**: XSS protection, content type sniffing prevention
+- **CORS Configuration**: Controlled cross-origin requests
+
+## Project Structure
+
+```
+django-auth-service/
+├── auth_service/           # Django project settings
+├── authentication/         # Main authentication app
+│   ├── management/        # Custom management commands
+│   ├── migrations/        # Database migrations
+│   ├── models.py         # User model
+│   ├── serializers.py    # API serializers
+│   ├── services.py       # Business logic
+│   ├── views.py          # API views
+│   ├── urls.py           # URL configuration
+│   ├── admin.py          # Admin configuration
+│   ├── tests.py          # Unit tests
+│   ├── middleware.py     # Custom middleware
+│   └── decorators.py     # Custom decorators
+├── requirements/          # Requirements files
+├── scripts/              # Deployment scripts
+├── docs/                 # Documentation
+├── docker-compose.yml    # Docker configuration
+├── Dockerfile           # Docker image definition
+├── render.yaml          # Render deployment config
+└── README.md           # This file
+```
+
+## Development Commands
+
+```bash
+# Create virtual environment
+python -m venv auth_env
+source auth_env/bin/activate  # On Windows: auth_env\Scripts\activate
+
+# Install dependencies
+pip install -r requirements/base.txt
+
+# Create migrations
+python manage.py makemigrations
+
+# Apply migrations
+python manage.py migrate
+
+# Create superuser
+python manage.py createsuperuser
+
+# Create test data
+python manage.py create_test_data
+
+# Run development server
+python manage.py runserver
+
+# Run tests
+python manage.py test
+
+# Collect static files
+python manage.py collectstatic
+```
+
+## Docker Commands
+
+```bash
+# Build and start services
+docker-compose up --build
+
+# Run commands in container
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py createsuperuser
+docker-compose exec web python manage.py test
+
+# View logs
+docker-compose logs web
+
+# Stop services
+docker-compose down
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Commit changes: `git commit -am 'Add new feature'`
+4. Push to branch: `git push origin feature/new-feature`
+5. Submit a Pull Request
+
+## Commit Message Convention
+
+This project follows conventional commit messages:
+
+- `feat:` - New features
+- `fix:` - Bug fixes  
+- `docs:` - Documentation updates
+- `config:` - Configuration changes
+- `test:` - Test additions/updates
+- `refactor:` - Code refactoring
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Authors
+
+- **Edwin Anajemba** - *Initial work* - [https://github.com/anajembaedwin](https://github.com/anajembaedwin)
+
+## Acknowledgments
+
+- Django Team for the excellent framework
+- Django REST Framework for API functionality
+- Bill Station for the internship opportunity
+- The open-source community for the amazing tools
+
+## Support
+
+If you have any questions or need help, please:
+
+1. Check the [API Documentation](docs/api_documentation.md)
+2. Look at existing [Issues](https://github.com/yourusername/django-auth-service/issues)
+3. Create a new issue with detailed information
+
+## Changelog
+
+### v1.0.0 (2024-01-15)
+- Initial release
+- User authentication system
+- JWT token management
+- Password reset functionality
+- Redis integration
+- Docker support
+- Production deployment configuration
+- Interactive Swagger documentation
