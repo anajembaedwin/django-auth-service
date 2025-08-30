@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from drf_yasg.utils import swagger_serializer_method
+from drf_yasg import openapi
 from .models import User
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -12,19 +14,32 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
     password = serializers.CharField(
         write_only=True,
+        min_length=8,
         style={'input_type': 'password'},
-        help_text='Enter a secure password'
+        help_text='Enter a secure password (minimum 8 characters)',
+        example='SecurePassword123'
     )
     
     password_confirm = serializers.CharField(
         write_only=True,
         style={'input_type': 'password'},
-        help_text='Confirm your password'
+        help_text='Confirm your password',
+        example='SecurePassword123'
     )
     
     class Meta:
         model = User
         fields = ['email', 'full_name', 'password', 'password_confirm']
+        extra_kwargs = {
+            'email': {
+                'help_text': 'Valid email address that will be used for login',
+                'example': 'john.doe@example.com'
+            },
+            'full_name': {
+                'help_text': 'Your full name (minimum 2 characters)',
+                'example': 'John Doe'
+            }
+        }
     
     def validate_email(self, value):
         """Validate that email is unique and properly formatted."""
@@ -80,10 +95,15 @@ class UserLoginSerializer(serializers.Serializer):
     Validates email and password credentials.
     """
     
-    email = serializers.EmailField()
+    email = serializers.EmailField(
+        help_text='Your registered email address',
+        example='john.doe@example.com'
+    )
     password = serializers.CharField(
         write_only=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
+        help_text='Your account password',
+        example='SecurePassword123'
     )
     
     def validate(self, attrs):
@@ -125,7 +145,10 @@ class PasswordResetRequestSerializer(serializers.Serializer):
     Validates email and generates reset token.
     """
     
-    email = serializers.EmailField()
+    email = serializers.EmailField(
+        help_text='Email address of the account to reset',
+        example='john.doe@example.com'
+    )
     
     def validate_email(self, value):
         """Validate that user with this email exists."""
@@ -143,14 +166,22 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
     Validates token and new password.
     """
     
-    token = serializers.CharField()
+    token = serializers.CharField(
+        help_text='Reset token received via email',
+        example='AbCd1234EfGh5678IjKl9012MnOp3456'
+    )
     new_password = serializers.CharField(
         write_only=True,
-        style={'input_type': 'password'}
+        min_length=8,
+        style={'input_type': 'password'},
+        help_text='New secure password (minimum 8 characters)',
+        example='NewSecurePassword456'
     )
     new_password_confirm = serializers.CharField(
         write_only=True,
-        style={'input_type': 'password'}
+        style={'input_type': 'password'},
+        help_text='Confirm your new password',
+        example='NewSecurePassword456'
     )
     
     def validate(self, attrs):
@@ -176,10 +207,17 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     """
     Serializer for user profile information.
-    Used to display user details.
+    Used to display user details in API responses.
     """
     
     class Meta:
         model = User
         fields = ['id', 'email', 'full_name', 'created_at', 'updated_at']
         read_only_fields = ['id', 'email', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'id': {'help_text': 'Unique user identifier'},
+            'email': {'help_text': 'User email address (read-only)'},
+            'full_name': {'help_text': 'User full name'},
+            'created_at': {'help_text': 'Account creation timestamp'},
+            'updated_at': {'help_text': 'Last profile update timestamp'}
+        }
