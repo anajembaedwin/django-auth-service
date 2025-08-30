@@ -25,6 +25,7 @@ services:
   - type: redis
     name: django-auth-redis
     plan: free
+    ipAllowList: []
 
 databases:
   - name: django-auth-db
