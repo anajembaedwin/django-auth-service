@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: django-auth-service
+    runtime: python
+    buildCommand: "pip install -r requirements/prod.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn auth_service.wsgi:application"
+    plan: free
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "django-auth-service.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: django-auth-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: django-auth-redis
+          property: connectionString
+
+databases:
+  - name: django-auth-db
+    databaseName: auth_service_db
+    user: auth_user
+    plan: free
+
+  - name: django-auth-redis
+    plan: free
