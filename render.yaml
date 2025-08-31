@@ -11,7 +11,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "django-auth-service.onrender.com"
+        value: "django-auth-service-1z64.onrender.com"
       - key: DATABASE_URL
         fromDatabase:
           name: django-auth-db
