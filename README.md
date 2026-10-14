@@ -38,7 +38,7 @@ A robust authentication system built with Django, PostgreSQL, Redis, and JWT tok
 
 1. **Clone the repository**:
 ```bash
-git clone https://github.com/yourusername/django-auth-service.git
+git clone https://github.com/anajembaedwin/django-auth-service.git
 cd django-auth-service
 ```
 
@@ -125,13 +125,13 @@ For detailed examples and integration guides, see [docs/api_documentation.md](do
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/register/` | User registration | No |
-| POST | `/login/` | User login | No |
-| POST | `/logout/` | User logout | Yes |
-| GET | `/profile/` | Get user profile | Yes |
-| POST | `/forgot-password/` | Request password reset | No |
-| POST | `/reset-password/` | Reset password with token | No |
-| GET | `/health/` | API health check | No |
+| POST | `/api/v1/auth/register/` | User registration | No |
+| POST | `/api/v1/auth/login/` | User login | No |
+| POST | `/api/v1/auth/logout/` | User logout | Yes |
+| GET | `/api/v1/auth/profile/` | Get user profile | Yes |
+| POST | `/api/v1/auth/forgot-password/` | Request password reset | No |
+| POST | `/api/v1/auth/reset-password/` | Reset password with token | No |
+| GET | `/api/v1/auth/health/` | API health check | No |
 
 ### Example Usage
 
@@ -171,8 +171,12 @@ Run the test suite:
 # Run all tests
 python manage.py test
 
-# Run tests with coverage
+# Run tests, keeping the test database between runs
 python manage.py test --keepdb --verbosity=2
+
+# Run tests with coverage (coverage is in requirements/dev.txt)
+coverage run manage.py test
+coverage report
 
 # Run specific test class
 python manage.py test authentication.tests.UserModelTest
@@ -332,7 +336,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you have any questions or need help, please:
 
 1. Check the [API Documentation](docs/api_documentation.md)
-2. Look at existing [Issues](https://github.com/yourusername/django-auth-service/issues)
+2. Look at existing [Issues](https://github.com/anajembaedwin/django-auth-service/issues)
 3. Create a new issue with detailed information
 
 ## Changelog
